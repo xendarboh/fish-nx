@@ -1,12 +1,14 @@
 function __nx_get_packages
-  cat package.json | jq -r '.devDependencies | keys | .[]' | grep '^@nrwl/' | sort
+  if test -e package.json && type -q jq
+    cat package.json | jq -r '.devDependencies | keys | .[]' | grep '^@nrwl/' | sort
+  end
 end
 
 function __nx_generate
   set -l packages (__nx_get_packages)
   for pkg in $packages
     set -l f "node_modules/$pkg/generators.json"
-    if test -f $f
+    if test -f $f && type -q jq
       set -l generators (cat $f | jq -r -M '.generators | keys | .[]')
       for generator in $generators
         set -l g (string trim $generator)
@@ -32,9 +34,11 @@ function __nx_run
       continue
     end
 
-    set -l scripts (cat $dir/$project/package.json | jq -r -M '.scripts | keys | .[]' 2>/dev/null)
-    for script in $scripts
-      echo -e "$project:$script"
+    if test -e $dir/$project/package.json && type -q jq
+      set -l scripts (cat $dir/$project/package.json | jq -r -M '.scripts | keys | .[]' 2>/dev/null)
+      for script in $scripts
+        echo -e "$project:$script"
+      end
     end
   end
 end
