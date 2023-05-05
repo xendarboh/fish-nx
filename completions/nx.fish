@@ -1,6 +1,6 @@
 function __nx_get_packages
   if test -e package.json && type -q jq
-    cat package.json | jq -r '.devDependencies | keys | .[]' | grep '^@nrwl/' | sort
+    cat package.json | jq -r '.devDependencies | keys | .[]' | egrep '^@(nrwl|nx)/' | sort
   end
 end
 
@@ -59,16 +59,19 @@ end
 
 set -l nx_commands g generate run run-many affected affected:graph affected-dep-graph print-affected daemon graph dep-graph format:check format:write format workspace-lint workspace-generator workspace-schematic migrate report init list reset clear-cache connect connect-to-nx-cloud repair view-logs exec watch show
 
-# ❯ nx --help                                                                                                                                                                                    2023-04-07 14:49:15
+# ❯ nx --version                                                                                                                                                                                                                                                                                                                                                          2023-05-05 10:11:55  
+# Nx Version: v16.1.0
+#
+# ❯ nx --help
 # Smart, Fast and Extensible Build System
 #
 # Commands:
-#   nx generate <generator> [_..]                    Generate or update source code (e.g., nx generate @nrwl/js:lib mylib).                                                                                [aliases: g]
+#   nx generate <generator> [_..]                    Generate or update source code (e.g., nx generate @nx/js:lib mylib).  [aliases: g]
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a g -d '[alias: generate]'
 complete -f -c nx -n "__fish_seen_subcommand_from g; and not __fish_seen_subcommand_from (__nx_generate)" -a "(__nx_generate)"
 complete -f -c nx -n "__fish_seen_subcommand_from (__nx_generate); and not __fish_seen_subcommand_from --" -a "--"
 
-complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a generate -d 'Generate or update source code (e.g., nx generate @nrwl/js:lib mylib).'
+complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a generate -d 'Generate or update source code (e.g., nx generate @nx/js:lib mylib).'
 complete -f -c nx -n "__fish_seen_subcommand_from generate; and not __fish_seen_subcommand_from (__nx_generate)" -a "(__nx_generate)"
 complete -f -c nx -n "__fish_seen_subcommand_from (__nx_generate); and not __fish_seen_subcommand_from --" -a "--"
 
@@ -89,10 +92,7 @@ complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a run-many 
 #   nx affected                                      Run target for affected projects
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a affected -d 'Run target for affected projects'
 
-#   nx affected:apps                                 Print applications affected by changes            [deprecated: Use `nx print-affected --type=app --select=projects` instead. This command will be removed in v15.]
-#   nx affected:libs                                 Print libraries affected by changes               [deprecated: Use `nx print-affected --type=lib --select=projects` instead. This command will be removed in v15.]
-
-#   nx affected:graph                                Graph dependencies affected by changes                                                                                               [aliases: affected:dep-graph]
+#   nx affected:graph                                Graph dependencies affected by changes  [aliases: affected:dep-graph]
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a affected:graph -d 'Graph dependencies affected by changes'
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a affected:dep-graph -d '[alias: affected:graph]'
 
@@ -102,22 +102,22 @@ complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a print-aff
 #   nx daemon                                        Prints information about the Nx Daemon process or starts a daemon process
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a daemon -d 'Prints information about the Nx Daemon process or starts a daemon process'
 
-#   nx graph                                         Graph dependencies within workspace                                                                                                           [aliases: dep-graph]
+#   nx graph                                         Graph dependencies within workspace  [aliases: dep-graph]
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a graph -d 'Graph dependencies within workspace'
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a dep-graph -d '[alias: graph]'
 
 #   nx format:check                                  Check for un-formatted files
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a format:check -d 'Check for un-formatted files'
 
-#   nx format:write                                  Overwrite un-formatted files                                                                                                                     [aliases: format]
+#   nx format:write                                  Overwrite un-formatted files  [aliases: format]
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a format:write -d 'Overwrite un-formatted files'
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a format       -d '[alias: format:write]'
 
-#   nx workspace-lint [files..]                      Lint nx specific workspace files (nx.json, workspace.json)
-complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a workspace-lint -d 'Lint nx specific workspace files (nx.json, workspace.json)'
+#   nx workspace-lint [files..]                      Lint nx specific workspace files (nx.json, workspace.json)  [deprecated: workspace-lint is deprecated, and will be removed in v17. The checks it used to perform are no longer relevant.]
+complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a workspace-lint -d 'Lint nx specific workspace files (nx.json, workspace.json)  [deprecated: no longer relevant]'
 
-#   nx workspace-generator [name]                    Runs a workspace generator from the tools/generators directory                                                                      [aliases: workspace-schematic]
-complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a workspace-generator -d 'Runs a workspace generator from the tools/generators directory'
+#   nx workspace-generator [generator]               Runs a workspace generator from the tools/generators directory  [aliases: workspace-schematic] [deprecated: Use a local plugin instead. See: https://nx.dev/deprecated/workspace-generators]
+complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a workspace-generator -d 'Runs a workspace generator from the tools/generators directory  [deprecated: use a local plugin instead]'
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a workspace-schematic -d '[alias: workspace-generator]'
 
 # OLD: complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a workspace-schematic -d 'Runs a workspace schematic from the tools/schematics directory'
@@ -125,32 +125,31 @@ complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a workspace
 # OLD: complete -f -c nx -n "__fish_seen_subcommand_from (__nx_workspace_schematic); and not __fish_seen_subcommand_from --" -a "--"
 
 #   nx migrate [packageAndVersion]                   Creates a migrations file or runs migrations from the migrations file.
-#                                                    - Migrate packages and create migrations.json (e.g., nx migrate @nrwl/workspace@latest)
+#                                                    - Migrate packages and create migrations.json (e.g., nx migrate @nx/workspace@latest)
 #                                                    - Run migrations (e.g., nx migrate --run-migrations=migrations.json). Use flag --if-exists to run migrations only if the migrations file exists.
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a migrate -d 'Creates a migrations file or runs migrations from the migrations file.'
 
 #   nx report                                        Reports useful version numbers to copy into the Nx issue template
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a report -d 'Reports useful version numbers to copy into the Nx issue template'
 
-#   nx init                                          Adds nx.json file and installs nx if not installed already
-complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a init -d 'Adds nx.json file and installs nx if not installed already'
+#   nx init                                          Adds Nx to any type of workspace. It installs nx, creates an nx.json configuration file and optionally sets up distributed caching. For more info, check https://nx.dev/recipes/adopting-nx.
+complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a init -d 'Adds Nx to any type of workspace. It installs nx, creates an nx.json configuration file and optionally sets up distributed caching.'
 
 #   nx list [plugin]                                 Lists installed plugins, capabilities of installed plugins and other available plugins.
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a list -d 'Lists installed plugins, capabilities of installed plugins and other available plugins.'
 
-#   nx reset                                         Clears all the cached Nx artifacts and metadata about the workspace and shuts down the Nx Daemon.                                           [aliases: clear-cache]
+#   nx reset                                         Clears all the cached Nx artifacts and metadata about the workspace and shuts down the Nx Daemon.  [aliases: clear-cache]
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a reset -d 'Clears all the cached Nx artifacts and metadata about the workspace and shuts down the Nx Daemon.'
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a clear-cache -d '[alias: reset]'
 
-#   nx connect                                       Connect workspace to Nx Cloud                                                                                                       [aliases: connect-to-nx-cloud]
+#   nx connect                                       Connect workspace to Nx Cloud  [aliases: connect-to-nx-cloud]
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a connect -d 'Connect workspace to Nx Cloud'
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a connect-to-nx-cloud -d '[alias: connect]'
 
 #   nx repair                                        Repair any configuration that is no longer supported by Nx.
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a repair -d 'Repair any configuration that is no longer supported by Nx.'
 
-#   nx view-logs                                     Enables you to view and interact with the logs via the advanced analytic UI from Nx Cloud to help you debug your issue. To do this, Nx needs to connect your
-#                                                    workspace to Nx Cloud and upload the most recent run details. Only the metrics are uploaded, not the artefacts.
+#   nx view-logs                                     Enables you to view and interact with the logs via the advanced analytic UI from Nx Cloud to help you debug your issue. To do this, Nx needs to connect your workspace to Nx Cloud and upload the most recent run details. Only the metrics are uploaded, not the artefacts.
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a view-logs -d 'Enables you to view and interact with the logs via the advanced analytic UI from Nx Cloud'
 
 #   nx exec                                          Executes any command as if it was a target on the project
@@ -163,5 +162,5 @@ complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a watch -d 
 complete -f -c nx -n "not __fish_seen_subcommand_from $nx_commands" -a show -d 'Show information about the workspace (e.g., list of projects)'
 
 # Options:
-#   --help     Show help                                                                                                                                                                                      [boolean]
-#   --version  Show version number                                                                                                                                                                            [boolean]
+#   --help     Show help  [boolean]
+#   --version  Show version number  [boolean]
