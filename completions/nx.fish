@@ -34,10 +34,23 @@ function __nx_run
       continue
     end
 
+    # get package.json scripts
     if test -e $dir/$project/package.json && type -q jq
       set -l scripts (cat $dir/$project/package.json | jq -r -M '.scripts | keys | .[]' 2>/dev/null)
       for script in $scripts
         echo -e "$project:$script"
+      end
+    end
+
+    # get project.json target(:configuration)
+    if test -e $dir/$project/project.json && type -q jq
+      set -l targets ( \
+        cat $dir/$project/project.json \
+          | jq -r -M '.targets | to_entries | map("\(.key as $target | try (.value.configurations | keys | map("\($target):\(.)") | .[]) catch $target)") | .[]' \
+          2>/dev/null \
+      )
+      for target in $targets
+        echo -e "$project:$target"
       end
     end
   end
